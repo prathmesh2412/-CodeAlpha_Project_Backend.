@@ -13,9 +13,7 @@ const password = process.env.MONGODB_PASSWORD;
 
 mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.cnks4.mongodb.net/registrationFormDB`, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  ssl: true,
-  sslValidate: false, 
+  useUnifiedTopology: true, 
 });
 
 const registrationSchema = new mongoose.Schema({
