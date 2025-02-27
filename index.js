@@ -11,9 +11,16 @@ const port = process.env.PORT || 3000;
 const username = process.env.MONGODB_USERNAME;
 const password = process.env.MONGODB_PASSWORD;
 
-mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.cnks4.mongodb.net/registrationFormDB`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true, 
+const uri = `mongodb+srv://${username}:${password}@cluster0.cnks4.mongodb.net/registrationFormDB`;
+
+mongoose.connect(uri, {
+  // No deprecated options included
+})
+.then(() => {
+  console.log('MongoDB connected successfully');
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err);
 });
 
 const registrationSchema = new mongoose.Schema({
@@ -36,8 +43,8 @@ app.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    const existingUser = await Registration.findOne({email : email});
-    if(!existingUser){
+    const existingUser = await Registration.findOne({ email: email });
+    if (!existingUser) {
       const registrationData = new Registration({
         name,
         email,
@@ -45,13 +52,9 @@ app.post("/register", async (req, res) => {
       });
       await registrationData.save();
       res.redirect("/success");
+    } else {
+      res.status(409).send("User already exists");
     }
-    else{
-      alert("User already exist");
-      res.redirect("/error");
-    }
-
-   
   } catch (error) { // added error parameter
     console.log(error);
     res.redirect("/error");
@@ -69,3 +72,4 @@ app.get("/error", (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
